@@ -1,0 +1,6 @@
+streamlit
+pandas
+numpy
+ultralytics
+scikit-image
+opencv-python-headless
