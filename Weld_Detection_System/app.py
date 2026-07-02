@@ -1,12 +1,6 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-
-import tempfile
-import os
-import urllib.request  # 👈 新增：用于自动下载文件的内置库
-from ultralytics import YOLO
-
+# =====================================================================
+# 🚨 核心拦截网：必须放在 app.py 的绝对第一行！比任何 import 都要早！
+# =====================================================================
 import sys
 import subprocess
 
@@ -20,6 +14,17 @@ except ImportError:
         subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python", "opencv-python-headless"])
         subprocess.run([sys.executable, "-m", "pip", "install", "opencv-python-headless"])
     import cv2
+
+# =====================================================================
+# 下面才是正常的系统导入模块（此时 OpenCV 环境已经被完美修复）
+# =====================================================================
+import streamlit as st
+import pandas as pd
+import numpy as np
+import tempfile
+import os
+import urllib.request  # 用于自动下载文件的内置库
+from ultralytics import YOLO
 
 # 核心导入：我们的算法工具箱
 from weld_utils import GeometricQuantifier, WeldTrajectoryMerger
