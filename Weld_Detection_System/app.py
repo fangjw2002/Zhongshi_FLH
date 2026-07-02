@@ -3,6 +3,7 @@
 # =====================================================================
 import sys
 import subprocess
+import importlib  # 👈 新增：用于刷新 Python 缓存的内置库
 
 # 🚀 核心修复逻辑：针对 Streamlit Cloud 强制替换无头版 OpenCV
 try:
@@ -10,9 +11,18 @@ try:
 except ImportError:
     # 如果检测到 OpenCV 因缺少底层驱动崩溃，立刻执行替换手术
     import streamlit as st
+
     with st.spinner("🔄 首次启动：正在修复云端 OpenCV 底层依赖冲突，请稍候约 30 秒..."):
+        # 1. 强行卸载冲突的包并重装无头版
         subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python", "opencv-python-headless"])
         subprocess.run([sys.executable, "-m", "pip", "install", "opencv-python-headless"])
+
+        # 2. 🚨 终极杀招：清除 Python 的“失败记忆”，强制它去硬盘读取新装好的包！
+        importlib.invalidate_caches()
+        if "cv2" in sys.modules:
+            del sys.modules["cv2"]
+
+    # 3. 再次导入，这次 Python 会老老实实加载新的正常包
     import cv2
 
 # =====================================================================
