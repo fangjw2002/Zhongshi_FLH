@@ -3,37 +3,34 @@
 # =====================================================================
 import sys
 import subprocess
-import importlib  # 👈 新增：用于刷新 Python 缓存的内置库
+import streamlit as st
 
 # 🚀 核心修复逻辑：针对 Streamlit Cloud 强制替换无头版 OpenCV
 try:
     import cv2
 except ImportError:
     # 如果检测到 OpenCV 因缺少底层驱动崩溃，立刻执行替换手术
-    import streamlit as st
-
     with st.spinner("🔄 首次启动：正在修复云端 OpenCV 底层依赖冲突，请稍候约 30 秒..."):
-        # 1. 强行卸载冲突的包并重装无头版
+        # 1. 强行卸载冲突的包并重装专为云端优化的无头版
         subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python", "opencv-python-headless"])
         subprocess.run([sys.executable, "-m", "pip", "install", "opencv-python-headless"])
 
-        # 2. 🚨 终极杀招：清除 Python 的“失败记忆”，强制它去硬盘读取新装好的包！
-        importlib.invalidate_caches()
-        if "cv2" in sys.modules:
-            del sys.modules["cv2"]
+    # 2. 🚨 终极杀招：手术完成后，立刻强制 Streamlit 重启整个网页进程！
+    st.success("✅ 底层依赖修复完成！系统即将自动重启以加载新环境...")
+    import time
 
-    # 3. 再次导入，这次 Python 会老老实实加载新的正常包
-    import cv2
+    time.sleep(2)
+    st.rerun()  # 👈 这行代码会立刻终止当前程序并重新从头运行，彻底清除报错记忆！
 
 # =====================================================================
-# 下面才是正常的系统导入模块（此时 OpenCV 环境已经被完美修复）
+# 下面才是正常的系统导入模块（重启后将直接跳过上面的修复，完美来到这里）
 # =====================================================================
-import streamlit as st
 import pandas as pd
 import numpy as np
 import tempfile
 import os
-import urllib.request  # 用于自动下载文件的内置库
+import urllib.request
+import cv2  # 👈 重启后，这里就能完美、顺畅地导入了！
 from ultralytics import YOLO
 
 # 核心导入：我们的算法工具箱
