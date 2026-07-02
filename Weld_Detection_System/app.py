@@ -1,9 +1,22 @@
+import os
+import sys
+
+# ==========================================
+# 🛑 终极云端环境急救补丁 (必须放在最顶端)
+# 强行卸载 YOLO 偷偷夹带的带界面版 OpenCV，强制换成无头版！
+# ==========================================
+try:
+    import cv2
+except ImportError:
+    os.system(f"{sys.executable} -m pip uninstall -y opencv-python opencv-contrib-python")
+    os.system(f"{sys.executable} -m pip install opencv-python-headless")
+# ==========================================
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import cv2
 import tempfile
-import os
 import urllib.request
 from ultralytics import YOLO
 
