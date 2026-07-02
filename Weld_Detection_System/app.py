@@ -1,11 +1,25 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import cv2
+
 import tempfile
 import os
 import urllib.request  # 👈 新增：用于自动下载文件的内置库
 from ultralytics import YOLO
+
+import sys
+import subprocess
+
+# 🚀 核心修复逻辑：针对 Streamlit Cloud 强制替换无头版 OpenCV
+try:
+    import cv2
+except ImportError:
+    # 如果检测到 OpenCV 因缺少底层驱动崩溃，立刻执行替换手术
+    import streamlit as st
+    with st.spinner("🔄 首次启动：正在修复云端 OpenCV 底层依赖冲突，请稍候约 30 秒..."):
+        subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python", "opencv-python-headless"])
+        subprocess.run([sys.executable, "-m", "pip", "install", "opencv-python-headless"])
+    import cv2
 
 # 核心导入：我们的算法工具箱
 from weld_utils import GeometricQuantifier, WeldTrajectoryMerger
